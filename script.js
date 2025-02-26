@@ -199,24 +199,25 @@ function buildDirectoryTree(entries, rootName, comments) {
     for (const entry of entries) {
         const pathParts = entry.path.split('/');
         let currentLevel = tree.children;
+        let currentPath = '';
         
         for (let i = 0; i < pathParts.length; i++) {
             const part = pathParts[i];
-            const isLast = i === pathParts.length - 1;
-            const fullPath = pathParts.slice(0, i + 1).join('/');
+            currentPath = currentPath ? `${currentPath}/${part}` : part;
+            
+            const isLastPart = i === pathParts.length - 1;
+            const type = isLastPart ? entry.type : 'dir';
             
             if (!currentLevel[part]) {
                 currentLevel[part] = {
                     name: part,
-                    type: isLast ? entry.type : 'dir',
-                    comment: comments[fullPath] || '',
+                    type: type,
+                    comment: comments[currentPath] || '',
                     children: {}
                 };
             }
             
-            if (!isLast) {
-                currentLevel = currentLevel[part].children;
-            }
+            currentLevel = currentLevel[part].children;
         }
     }
     
@@ -271,7 +272,7 @@ function generateTreeLines(children, indent, lines, includeEmpty, currentDepth, 
             return a.name.localeCompare(b.name);
         });
         
-        if (childChildren.length > 0 || includeEmpty) {
+        if (childChildren.length > 0 || (includeEmpty && child.type === 'dir')) {
             const newIndent = indent + (isLast ? '    ' : '│   ');
             generateTreeLines(childChildren, newIndent, lines, includeEmpty, currentDepth + 1, maxDepth);
         }
