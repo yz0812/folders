@@ -251,7 +251,7 @@ function generateTreeLines(children, indent, lines, includeEmpty, currentDepth, 
     // 如果超过最大深度，则停止递归
     if (currentDepth > maxDepth) {
         if (children.length > 0) {
-            lines.push(`${indent}└── ...（已达到深度限制）`);
+            //lines.push(`${indent}└── ...（已达到深度限制）`);
         }
         return;
     }
